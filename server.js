@@ -88,12 +88,21 @@ app.get("/products", async (req, res) => {
         const card = a.closest("article") || a.closest("li") || a.closest("div");
         if (!card) continue;
 
+        const txt = (a.textContent || "").trim().toLowerCase();
+        const cls = (a.getAttribute("class") || "").toLowerCase();
+        const rel = (a.getAttribute("rel") || "").toLowerCase();
+
+        if (txt.includes("quick view") || cls.includes("quick-view") || rel.includes("nofollow")) {
+          continue;
+        }
+
         const title =
           pickText(card, ".product-title") ||
-          a.getAttribute("title") ||
-          (a.textContent || "").trim() ||
+          pickText(card, ".product-title a") ||
           pickText(card, "h2") ||
-          pickText(card, "h3");
+          pickText(card, "h3") ||
+          a.getAttribute("title") ||
+          "";
 
         if (!title || title.length < 3) continue;
 
